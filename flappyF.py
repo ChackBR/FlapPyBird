@@ -9,7 +9,7 @@ from pygame.locals import *
 
 nFPS = 30
 nVolume = .2
-nScrWidth  = 800
+nScrWidth  = 320
 nScrHeight = 640
 # Amount by which base can maximum shift to left
 nPipeGapSize  = 108 # gap between upper and lower part of pipe

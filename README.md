@@ -2,6 +2,7 @@ FlapPyBird
 ===============
 
 A Flappy Bird Clone made using [python-pygame][pygame]
+*Updated to Arcade Mode with Fury
 
 How-to (as tested on MacOS)
 ---------------------------
@@ -35,6 +36,7 @@ Notable forks
 -------------
 
 - [FlappyBird Fury Mode](https://github.com/Cc618/FlapPyBird)
+- [FlappyBird Arcade Mode + Fury](https://github.com/ChackBR/FlapPyBird)
 - [FlappyBird Model Predictive Control](https://github.com/philzook58/FlapPyBird-MPC)
 - [FlappyBird OpenFrameworks Port](https://github.com/TheLogicMaster/ofFlappyBird)
 - [FlappyBird On Quantum Computing](https://github.com/WingCode/QuFlapPyBird)

@@ -8,6 +8,7 @@ from pygame.locals import *
 
 
 nFPS = 30
+oFont = ''
 nVolume = .2
 nScrWidth  = 320
 nScrHeight = 640
@@ -70,9 +71,12 @@ except NameError:
 
 
 def main():
-    global oScreen, oFPSClock
+    global oScreen, oFPSClock, oFont, nScrWidth
     pygame.init()
     oFPSClock = pygame.time.Clock()
+    #pygame
+    infoObject = pygame.display.Info()
+    nScrWidth = infoObject.current_w // 2
     oScreen = pygame.display.set_mode((nScrWidth, nScrHeight))
     pygame.display.set_caption('Flappy Fury Bird by Rafa10')
 
@@ -245,7 +249,7 @@ def mainGame(movementInfo):
     global nFURYMODE_FRAMES_TO_SPAWN_PIPES
 
     nScore = 0
-    nCrash = 0
+    nLives = 10
     playerIndex = 0
     loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
@@ -321,10 +325,8 @@ def mainGame(movementInfo):
 
         if crashTest[0]:
             # the player hits a pipe in fury mode
-            if bFuryMode and not crashTest[1]:
-                nCrash += 1
+            if bFuryMode and nLives > 0 and not crashTest[1]:
                 spawnParticles(particles, crashTest[3])
-
                 # remove the pipe
                 # it's an upper pipe
                 if crashTest[2]:
@@ -332,7 +334,7 @@ def mainGame(movementInfo):
                 # it's a lower pipe
                 else:
                     lowerPipes.remove(crashTest[3])
-
+                nLives -= 1
             else:
                 return {
                     'y': playery,
@@ -341,7 +343,7 @@ def mainGame(movementInfo):
                     'upperPipes': upperPipes,
                     'lowerPipes': lowerPipes,
                     'nScore': nScore,
-                    'nCrash': nCrash,
+                    'nCrash': nLives,
                     'playerVelY': playerVelY,
                     'playerRot': playerRot
                 }
@@ -446,7 +448,7 @@ def mainGame(movementInfo):
         oScreen.blit(fImages['base'], (basex, nBaseY))
 
         # print score so player overlaps the score
-        showScore(nScore,nCrash)
+        showScore(nScore,nLives)
 
         # Player rotation has a threshold
         visibleRot = playerRotThr
@@ -558,7 +560,7 @@ def showScore(nScore,nCrash):
     Xoffset = ( nScrWidth / 3 ) - totalWidth
 
     for digit in scoreDigits:
-        oScreen.blit(fImages['numbers'][digit], (Xoffset, nScrHeight * 0.9))
+        oScreen.blit(fImages['numbers'][digit], (Xoffset, nScrHeight * 0.92))
         Xoffset += fImages['numbers'][digit].get_width()
 
     scoreDigits = [int(x) for x in list(str(nCrash))]
@@ -572,7 +574,7 @@ def showScore(nScore,nCrash):
     for digit in scoreDigits:
         img = fImages['numbers'][digit].copy()
         drop(img)
-        oScreen.blit(img, (Xoffset, nScrHeight * 0.9))
+        oScreen.blit(img, (Xoffset, nScrHeight * 0.92))
         Xoffset += img.get_width()
 
 def spawnParticles(particles, pipe):

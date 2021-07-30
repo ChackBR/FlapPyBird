@@ -1,18 +1,14 @@
-FlapPyBird
-===============
+FlapPy Bird Raged Mode
+======================
 
 A Flappy Bird Clone made using [python-pygame][pygame]
 
 - 1 - Updated to Arcade Mode WideScreen (Multi Resolution)
 - 1.1 - Auto resize to DeskTop Width // 2
-
 - 2 - Add Fury/Raged mode
-
 - 3 - Display Crashes Number as Lives Remmaning (Limitted to 10)
 - 3.1 - Add color change to Diplay Lives Remmaning
-
 - 4 - Sound volume decreased to 20%
-
 - 5 - Add Font to Diplay Text (Will use Default OS Font)
 
 

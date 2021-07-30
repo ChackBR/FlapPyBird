@@ -8,6 +8,7 @@ from pygame.locals import *
 
 
 nFPS = 30
+oFont = ''
 nVolume = .2
 nScrWidth  = 800
 nScrHeight = 640

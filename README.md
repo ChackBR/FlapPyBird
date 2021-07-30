@@ -2,7 +2,14 @@ FlapPyBird
 ===============
 
 A Flappy Bird Clone made using [python-pygame][pygame]
-*Updated to Arcade Mode with Fury
+
+1 - Updated to Arcade Mode WideScreen (Multi Resolution)
+1.1 - Auto resize to DeskTop Width // 2
+2 - Add with Fury mode
+3 - Display Crashes Number as Lives Remmaning (Limitted to 10)
+3.1 - Add color change to Diplay Lives Remmaning
+4 - Sound volume decreased to 20%
+5 - Add Font to Diplay Text (Will use Default OS Font)
 
 How-to (as tested on MacOS)
 ---------------------------
@@ -16,7 +23,8 @@ How-to (as tested on MacOS)
 1. Clone the repository:
 
    ```bash
-   $ git clone https://github.com/sourabhv/FlapPyBird
+   $ git clone https://github.com/ChackBR/FlapPyBird
+   
    ```
 
    or download as zip and extract.
@@ -35,8 +43,8 @@ How-to (as tested on MacOS)
 Notable forks
 -------------
 
+- [Fork From](https://github.com/sourabhv/FlapPyBird)
 - [FlappyBird Fury Mode](https://github.com/Cc618/FlapPyBird)
-- [FlappyBird Arcade Mode + Fury](https://github.com/ChackBR/FlapPyBird)
 - [FlappyBird Model Predictive Control](https://github.com/philzook58/FlapPyBird-MPC)
 - [FlappyBird OpenFrameworks Port](https://github.com/TheLogicMaster/ofFlappyBird)
 - [FlappyBird On Quantum Computing](https://github.com/WingCode/QuFlapPyBird)

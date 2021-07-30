@@ -70,9 +70,12 @@ except NameError:
 
 
 def main():
-    global oScreen, oFPSClock, oFont
+    global oScreen, oFPSClock, oFont, nScrWidth
     pygame.init()
     oFPSClock = pygame.time.Clock()
+    #pygame
+    infoObject = pygame.display.Info()
+    nScrWidth = infoObject.current_w // 2
     oScreen = pygame.display.set_mode((nScrWidth, nScrHeight))
     pygame.display.set_caption('Flappy Raged Bird [by Rafa10]')
 
@@ -247,7 +250,7 @@ def mainGame(movementInfo):
     global nFURYMODE_FRAMES_TO_SPAWN_PIPES
 
     nScore = 0
-    nCrash = 0
+    nLives = 10
     playerIndex = 0
     loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
@@ -323,10 +326,8 @@ def mainGame(movementInfo):
 
         if crashTest[0]:
             # the player hits a pipe in fury mode
-            if bFuryMode and not crashTest[1]:
-                nCrash += 1
+            if bFuryMode and nLives > 0 and not crashTest[1]:
                 spawnParticles(particles, crashTest[3])
-
                 # remove the pipe
                 # it's an upper pipe
                 if crashTest[2]:
@@ -334,7 +335,7 @@ def mainGame(movementInfo):
                 # it's a lower pipe
                 else:
                     lowerPipes.remove(crashTest[3])
-
+                nLives -= 1
             else:
                 return {
                     'y': playery,
@@ -343,7 +344,7 @@ def mainGame(movementInfo):
                     'upperPipes': upperPipes,
                     'lowerPipes': lowerPipes,
                     'nScore': nScore,
-                    'nCrash': nCrash,
+                    'nCrash': nLives,
                     'playerVelY': playerVelY,
                     'playerRot': playerRot
                 }
@@ -448,7 +449,7 @@ def mainGame(movementInfo):
         oScreen.blit(fImages['base'], (basex, nBaseY))
 
         # print score so player overlaps the score
-        showScore(nScore,nCrash)
+        showScore(nScore,nLives)
 
         # Player rotation has a threshold
         visibleRot = playerRotThr
@@ -521,13 +522,6 @@ def showGameOverScreen(crashInfo):
         oScreen.blit(playerSurface, (playerx,playery))
         oScreen.blit(fImages['gameover'], (gameoverx, gameovery))
 
-        # now print the text
-        cTxt = str( nScore - nCrash )
-        text_surface = oFont.render('Final Score [ ' + cTxt + ' ] ', True, (0, 0, 0))
-        text_x = int((nScrWidth - text_surface.get_width()) / 2)
-        text_y = int(nScrHeight * 0.96)
-        oScreen.blit(text_surface, dest=(text_x, text_y))
-
         oFPSClock.tick(nFPS)
         pygame.display.update()
 
@@ -557,7 +551,15 @@ def getRandomPipe():
     ]
 
 def showScore(nScore,nCrash):
-    """displays score in center of screen"""
+
+    # now print the text
+    cTxt = 'Score'
+    text_surface = oFont.render(cTxt, True, (16, 128, 255))
+    text_x = int(nScrWidth / 3) - text_surface.get_width()
+    text_y = int(nScrHeight * 0.88)
+    oScreen.blit(text_surface, dest=(text_x, text_y))
+
+    """displays score """
     scoreDigits = [int(x) for x in list(str(nScore))]
     totalWidth = 0 # total width of all numbers to be printed
 
@@ -567,9 +569,16 @@ def showScore(nScore,nCrash):
     Xoffset = ( nScrWidth / 3 ) - totalWidth
 
     for digit in scoreDigits:
-        oScreen.blit(fImages['numbers'][digit], (Xoffset, nScrHeight * 0.9))
+        oScreen.blit(fImages['numbers'][digit], (Xoffset, nScrHeight * 0.92))
         Xoffset += fImages['numbers'][digit].get_width()
 
+    # now print the text
+    cTxt = 'Lives Remaining'
+    text_surface = oFont.render(cTxt, True, (16, 128, 255))
+    text_x = Xoffset * 2
+    oScreen.blit(text_surface, dest=(text_x, text_y))
+
+    """displays score """
     scoreDigits = [int(x) for x in list(str(nCrash))]
     totalWidth = 0 # total width of all numbers to be printed
 
@@ -581,7 +590,7 @@ def showScore(nScore,nCrash):
     for digit in scoreDigits:
         img = fImages['numbers'][digit].copy()
         drop(img)
-        oScreen.blit(img, (Xoffset, nScrHeight * 0.9))
+        oScreen.blit(img, (Xoffset, nScrHeight * 0.92))
         Xoffset += img.get_width()
 
 def spawnParticles(particles, pipe):

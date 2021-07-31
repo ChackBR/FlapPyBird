@@ -6,7 +6,7 @@ import math
 import pygame
 from pygame.locals import *
 
-
+# Default settings
 nFPS = 30
 oFont = ''
 nVolume = .2
@@ -63,7 +63,6 @@ fPIPES_LIST = (
     'assets/sprites/pipe-red.png',
 )
 
-
 try:
     xrange
 except NameError:
@@ -72,28 +71,23 @@ except NameError:
 
 def main():
     global oScreen, oFPSClock, oFont, nScrWidth
+
+    #pygame
     pygame.init()
     oFPSClock = pygame.time.Clock()
-    #pygame
     infoObject = pygame.display.Info()
     nScrWidth = infoObject.current_w // 2
     oScreen = pygame.display.set_mode((nScrWidth, nScrHeight))
-    pygame.display.set_caption('Flappy Fury Bird by Rafa10')
+    #Default Font to show Text
+    #oFont = pygame.font.Font(pygame.font.get_default_font(), 18)
+    #Window Title
+    pygame.display.set_caption('Flappy Bird: Arcade Mode [by Rafa10]')
 
     # numbers sprites for score display
-    fImages['numbers'] = (
-        pygame.image.load('assets/sprites/0.png').convert_alpha(),
-        pygame.image.load('assets/sprites/1.png').convert_alpha(),
-        pygame.image.load('assets/sprites/2.png').convert_alpha(),
-        pygame.image.load('assets/sprites/3.png').convert_alpha(),
-        pygame.image.load('assets/sprites/4.png').convert_alpha(),
-        pygame.image.load('assets/sprites/5.png').convert_alpha(),
-        pygame.image.load('assets/sprites/6.png').convert_alpha(),
-        pygame.image.load('assets/sprites/7.png').convert_alpha(),
-        pygame.image.load('assets/sprites/8.png').convert_alpha(),
-        pygame.image.load('assets/sprites/9.png').convert_alpha()
-    )
-
+    fImages['numbers'] = []
+    for i in range(10):
+        img = pygame.image.load('assets/sprites/' + str(i) + '.png').convert_alpha()
+        fImages['numbers'].append(img)
     # game over sprite
     fImages['gameover'] = pygame.image.load('assets/sprites/gameover.png').convert_alpha()
     # message sprite for welcome screen
@@ -101,27 +95,23 @@ def main():
     # base (ground) sprite
     fImages['base'] = pygame.image.load('assets/sprites/base.png').convert_alpha()
     fImages['base'] = pygame.transform.scale(fImages['base'], (nScrWidth-1,int(nScrHeight*.22)) )
-
     # the "fury mode" button for welcome screen (with the key)
     fImages['furymode'] = pygame.image.load('assets/sprites/furymode.png').convert_alpha()
 
-    # sounds
+    # sound ext type
     if 'win' in sys.platform:
         soundExt = '.wav'
     else:
         soundExt = '.ogg'
 
+    # sound files and volume
     fSounds['die']    = pygame.mixer.Sound('assets/audio/die' + soundExt)
     fSounds['hit']    = pygame.mixer.Sound('assets/audio/hit' + soundExt)
     fSounds['point']  = pygame.mixer.Sound('assets/audio/point' + soundExt)
     fSounds['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
     fSounds['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
-    
-    fSounds['die'].set_volume( nVolume ) 
-    fSounds['hit'].set_volume( nVolume ) 
-    fSounds['point'].set_volume( nVolume )
-    fSounds['swoosh'].set_volume( nVolume )
-    fSounds['wing'].set_volume( nVolume )
+    for key in fSounds:
+        fSounds[key].set_volume( nVolume ) 
 
     while True:
         # select random background sprites
@@ -147,27 +137,16 @@ def main():
 
         # pipes' particles for fury mode
         if pipeindex == 0:
-            fImages['pipe-particle'] = (
-                pygame.image.load('assets/sprites/particles-green-0.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-1.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-2.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-3.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-4.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-5.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-6.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-green-7.png').convert_alpha(),
-            )
+            fImages['pipe-particle'] = []
+            for i in range(8):
+                img = pygame.image.load('assets/sprites/particles-green-' + str(i) + '.png').convert_alpha()
+                fImages['pipe-particle'].append(img)
+
         else:
-            fImages['pipe-particle'] = (
-                pygame.image.load('assets/sprites/particles-red-0.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-1.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-2.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-3.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-4.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-5.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-6.png').convert_alpha(),
-                pygame.image.load('assets/sprites/particles-red-7.png').convert_alpha(),
-            )
+            fImages['pipe-particle'] = []
+            for i in range(8):
+                img = pygame.image.load('assets/sprites/particles-red-' + str(i) + '.png').convert_alpha()
+                fImages['pipe-particle'].append(img)
 
         # hismask for pipes
         fHitMask['pipe'] = (
@@ -196,7 +175,10 @@ def showWelcomeAnimation():
     # iterator used to change playerIndex after every 5th iteration
     loopIter = 0
 
-    playerx = int(nScrWidth * 0.2)
+    if nScrWidth > 440:
+        playerx = int(nScrWidth // 3)
+    else:
+        playerx = int(nScrWidth // 2)
     playery = int((nScrHeight - fImages['player'][0].get_height()) / 2)
 
     messagex = int((nScrWidth - fImages['message'].get_width()) / 2)
@@ -253,7 +235,11 @@ def mainGame(movementInfo):
     playerIndex = 0
     loopIter = 0
     playerIndexGen = movementInfo['playerIndexGen']
-    playerx, playery = int(nScrWidth * 0.2), movementInfo['playery']
+
+    if nScrWidth > 440:
+        playerx, playery = int(nScrWidth // 3), movementInfo['playery']
+    else:
+        playerx, playery = int(nScrWidth // 5), movementInfo['playery']
 
     basex = movementInfo['basex']
     baseShift = fImages['base'].get_width() - fImages['background'].get_width()
@@ -278,16 +264,17 @@ def mainGame(movementInfo):
         newPipe1 = getRandomPipe()
         newPipe2 = getRandomPipe()
 
+        nPos = 200
         # list of upper pipes
         upperPipes = [
-            {'x': nScrWidth + 200, 'y': newPipe1[0]['y']},
-            {'x': nScrWidth + 200 + (nScrWidth / 2), 'y': newPipe2[0]['y']},
+            {'x': nScrWidth + nPos, 'y': newPipe1[0]['y']},
+            {'x': nScrWidth + nPos + (nScrWidth / 2), 'y': newPipe2[0]['y']},
         ]
 
         # list of lowerpipe
         lowerPipes = [
-            {'x': nScrWidth + 200, 'y': newPipe1[1]['y']},
-            {'x': nScrWidth + 200 + (nScrWidth / 2), 'y': newPipe2[1]['y']},
+            {'x': nScrWidth + nPos, 'y': newPipe1[1]['y']},
+            {'x': nScrWidth + nPos + (nScrWidth / 2), 'y': newPipe2[1]['y']},
         ]
 
     pipeVelX = -4
@@ -303,10 +290,8 @@ def mainGame(movementInfo):
     playerFlapAcc =  -9   # players speed on flapping
     playerFlapped = False # True when player flaps
 
-
     # The counter to spawn new pipes 
     furymodePipeFrameCounter = 0
-
 
     while True:
         for event in pygame.event.get():
@@ -354,6 +339,8 @@ def mainGame(movementInfo):
             pipeMidPos = pipe['x'] + fImages['pipe'][0].get_width() / 2
             if pipeMidPos <= playerMidPos < pipeMidPos + 4:
                 nScore += 1
+                if (nScore % 25) == 0:
+                    nLives += 1
                 fSounds['point'].play()
 
         # playerIndex basex change
@@ -524,7 +511,6 @@ def showGameOverScreen(crashInfo):
         oFPSClock.tick(nFPS)
         pygame.display.update()
 
-
 def playerShm(playerShm):
     """oscillates the value of playerShm['val'] between 8 and -8"""
     if abs(playerShm['val']) == 8:
@@ -534,7 +520,6 @@ def playerShm(playerShm):
          playerShm['val'] += 1
     else:
         playerShm['val'] -= 1
-
 
 def getRandomPipe():
     """ returns a randomly generated pipe """
@@ -605,8 +590,6 @@ def spawnParticles(particles, pipe):
 
     # sound effect
     fSounds['hit'].play()
-
-
 
 def checkCrash(player, upperPipes, lowerPipes):
     """returns True if player collides with base or pipes."""

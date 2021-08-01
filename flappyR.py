@@ -9,6 +9,7 @@ from pygame.locals import *
 # Default settings
 nFPS = 30
 oFont = ''
+oScreen = ''
 nVolume = .2
 nScrWidth  = 320
 nScrHeight = 640
@@ -175,10 +176,7 @@ def showWelcomeAnimation():
     # iterator used to change playerIndex after every 5th iteration
     loopIter = 0
 
-    if nScrWidth > 440:
-        playerx = int(nScrWidth // 3)
-    else:
-        playerx = int(nScrWidth // 2)
+    playerx = int(nScrWidth // 3 ) if nScrWidth > 440 else int(nScrWidth // 5 )
     playery = int((nScrHeight - fImages['player'][0].get_height()) / 2)
 
     messagex = int((nScrWidth - fImages['message'].get_width()) / 2)
@@ -341,7 +339,7 @@ def mainGame(movementInfo):
                 nScore += 1
                 if (nScore % 25) == 0:
                     nLives += 1
-                fSounds['point'].play()
+                    fSounds['point'].play()
 
         # playerIndex basex change
         if (loopIter + 1) % 3 == 0:
@@ -358,7 +356,6 @@ def mainGame(movementInfo):
             playerVelY += playerAccY
         if playerFlapped:
             playerFlapped = False
-
             # more rotation to cover the threshold (calculated in visible rotation)
             playerRot = 45
 
@@ -449,11 +446,11 @@ def mainGame(movementInfo):
         oFPSClock.tick(nFPS)
 
 def showGameOverScreen(crashInfo):
-    """crashes the player down ans shows gameover image"""
+    """crashes the player down and shows gameover image"""
 
     nScore  = crashInfo['nScore']
     nCrash  = crashInfo['nCrash']
-    playerx = nScrWidth * 0.2
+    playerx = int(nScrWidth // 3 ) if nScrWidth > 440 else int(nScrWidth // 5 )
     playery = crashInfo['y']
     playerHeight = fImages['player'][0].get_height()
     playerVelY = crashInfo['playerVelY']
@@ -534,7 +531,7 @@ def getRandomPipe():
         {'x': pipeX, 'y': gapY + nPipeGapSize}, # lower pipe
     ]
 
-def showScore(nScore,nCrash):
+def showScore(nScore,nLives):
 
     # now print the text
     cTxt = 'Score'
@@ -557,17 +554,23 @@ def showScore(nScore,nCrash):
         Xoffset += fImages['numbers'][digit].get_width()
 
     # now print the text
-    cTxt = 'Lives Remaining'
+    cTxt = 'Lives' if nLives > 1 else 'Life'
     text_surface = oFont.render(cTxt, True, (16, 128, 255))
     text_x = Xoffset * 2
     oScreen.blit(text_surface, dest=(text_x, text_y))
 
     """displays score """
-    scoreDigits = [int(x) for x in list(str(nCrash))]
+    scoreDigits = [int(x) for x in list(str(nLives))]
     totalWidth = 0 # total width of all numbers to be printed
 
     for digit in scoreDigits:
         totalWidth += fImages['numbers'][digit].get_width()
+
+    barPos      = ( ( nScrWidth / 18 ) * 7, nScrHeight * 0.92)
+    barSize     = (( nScrWidth / 9 ) * 2, 16)
+    borderColor = (0, 0, 0)
+    barColor    = (0, 0, 128) if nLives > 5 else (0, 128, 0) if nLives > 1 else (128, 0, 0)
+    DrawBar(barPos, barSize, borderColor, barColor, nLives/10)
 
     Xoffset = Xoffset * 2
 
@@ -703,6 +706,13 @@ def drop(surface):
                b-=50
             a = surface.get_at((x, y))[3]
             surface.set_at((x, y), pygame.Color(r, g, b, a)) 
+
+def DrawBar(pos, size, borderC, barC, progress):
+
+    pygame.draw.rect(oScreen, borderC, (*pos, *size), 1)
+    innerPos  = (pos[0]+3, pos[1]+3)
+    innerSize = ((size[0]-6) * progress, size[1]-6)
+    pygame.draw.rect(oScreen, barC, (*innerPos, *innerSize))
 
 if __name__ == '__main__':
     main()
